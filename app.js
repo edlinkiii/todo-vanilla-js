@@ -1,6 +1,6 @@
 const container = document.querySelector('#container');
 
-container.innerHTML = `<h1>To Do -- Vanilla JS</h1>`;
+container.innerHTML = `<h1 style='text-align:center;'>To Do -- Vanilla JS</h1>`;
 
 // setup node.js server
 // connect to todo api (GET)
@@ -9,6 +9,7 @@ container.innerHTML = `<h1>To Do -- Vanilla JS</h1>`;
 // add `delete` functionality (DELETE)
 // create `add` form
 // handle `add` form input (POST)
+
 
 
 
