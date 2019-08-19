@@ -1,0 +1,23 @@
+{
+  "name": "todo-vanilla",
+  "version": "1.0.0",
+  "description": "Simple \"To Do\" app, using only Vanilla JavaScript",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edlinkiii/todo-vanilla-js.git"
+  },
+  "author": "Ed Link III",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/edlinkiii/todo-vanilla-js/issues"
+  },
+  "homepage": "https://github.com/edlinkiii/todo-vanilla-js#readme",
+  "devDependencies": {
+    "lite-server": "^2.5.4"
+  }
+}
