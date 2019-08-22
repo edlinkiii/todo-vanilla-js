@@ -1,4 +1,5 @@
 # todo-vanilla-js
-Simple "To Do" app, using only Vanilla JavaScript
+Simple "To Do" app, using only Vanilla (ES6) JavaScript
 
-(I'm also trying to learn Git)
+Not fully functional yet...
+
