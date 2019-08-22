@@ -2,9 +2,6 @@ const container = document.querySelector('#container');
 
 container.innerHTML = `<h1 style='text-align:center;'>To Do -- Vanilla JS</h1>`;
 
-// setup node.js server -- done
-
-// connect to todo api (GET) -- done
 const getTodos = () => {
     fetch('https://jsonplaceholder.typicode.com/todos')
     .then(data => data.json())
@@ -17,32 +14,45 @@ const getTodos = () => {
     })
 }
 
-// format/display todo items -- done
+const handleClickTodo = e => {
+    let id = e.target.id.replace('todo_','');
+    let done = e.target.classList.contains('done');
+    
+    fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ completed: !done }),
+        headers:{ 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json())
+    .then(json => updateStatus(json))
+    .catch(err => console.error('Error:', err));
+}
+
+const updateStatus = obj => {
+    let el = document.querySelector(`#todo_${obj.id}`);
+    if(obj.completed)
+        el.classList.add('done');
+    else
+        el.classList.remove('done');
+}
+
 const displayTodoList = json => {
-    json.forEach(todo => {
-        todoEl = document.createElement('div');
-        todoEl.id = todo.id;
-        todoLabel = document.createElement('label');
-        todoChk = document.createElement('input');
-        todoChk.setAttribute('type','checkbox');
-        if(todo.completed) {
-            todoChk.setAttribute('checked','checked');
-            todoEl.classList.add('done');
-        }
+    json.forEach((todo, i) => {
+        if(i >= 20) return false;
+        let todoEl = document.createElement('div');
+        todoEl.id = `todo_${todo.id}`;
         todoEl.classList.add('todo-item');
-        todoEl.appendChild(todoChk);
-        todoText = document.createTextNode(todo.title);
+        let todoText = document.createTextNode(todo.title);
+        if(todo.completed) todoEl.classList.add('done');
+        todoEl.appendChild(todoText);
+        todoEl.addEventListener('click', handleClickTodo, true);
         container.appendChild(todoEl);
-        todoEl.appendChild(todoLabel);
-        todoLabel.appendChild(todoChk);
-        todoLabel.appendChild(todoText);
     });
 } 
 
 getTodos();
 
 // sort items, undone first
-// add `check` functionality (PUT)
 // add `delete` functionality (DELETE)
 // create `add` form
 // handle `add` form input (POST)
