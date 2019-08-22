@@ -68,13 +68,3 @@ getTodos();
 //     deleteTodo: 'https://jsonplaceholder.typicode.com/todos/' // ${id}
 // }
 
-
-
-/******* NEXT
- * Vanilla Web Components
- * React
- * React/Redux
- * Angular
- * Backbone
- * TypeScript 
-*/
