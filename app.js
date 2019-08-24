@@ -1,6 +1,9 @@
 const container = document.querySelector('#container');
+const input = document.querySelector('#new-todo');
+const todoDiv = document.querySelector('#todo');
+const doneDiv = document.querySelector('#done');
 
-container.innerHTML = `<h1 style='text-align:center;'>To Do -- Vanilla JS</h1>`;
+// container.innerHTML = `<h1 style='text-align:center;'>To Do -- Vanilla JS</h1>`;
 
 const getTodos = () => {
     fetch('https://jsonplaceholder.typicode.com/todos')
@@ -15,8 +18,10 @@ const getTodos = () => {
 }
 
 const handleClickTodo = e => {
+    console.log(e.target.parentElement.id);
+
     let id = e.target.id.replace('todo_','');
-    let done = e.target.classList.contains('done');
+    let done = (e.target.parentElement.id === "done");
     
     fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
         method: 'PUT',
@@ -30,27 +35,48 @@ const handleClickTodo = e => {
 
 const updateStatus = obj => {
     let el = document.querySelector(`#todo_${obj.id}`);
-    if(obj.completed)
-        el.classList.add('done');
-    else
-        el.classList.remove('done');
+    if(obj.completed) {
+        doneDiv.prepend(el);
+    }
+    else {
+        todoDiv.prepend(el);
+    }
+}
+
+const displayTodo = todo => {
+    let todoText = document.createTextNode(todo.title);
+    let todoEl = document.createElement('div');
+    todoEl.id = `todo_${todo.id}`;
+    todoEl.classList.add('todo-item');
+    todoEl.appendChild(todoText);
+    todoEl.addEventListener('click', handleClickTodo, true);
+    if(todo.completed) {
+        doneDiv.appendChild(todoEl);
+    }
+    else {
+        todoDiv.appendChild(todoEl);
+    }
 }
 
 const displayTodoList = json => {
     json.forEach((todo, i) => {
         if(i >= 20) return false;
-        let todoEl = document.createElement('div');
-        todoEl.id = `todo_${todo.id}`;
-        todoEl.classList.add('todo-item');
-        let todoText = document.createTextNode(todo.title);
-        if(todo.completed) todoEl.classList.add('done');
-        todoEl.appendChild(todoText);
-        todoEl.addEventListener('click', handleClickTodo, true);
-        container.appendChild(todoEl);
+
+        displayTodo(todo);
     });
 } 
 
 getTodos();
+
+input.addEventListener('keyup', e => {
+    if(e.key === "Enter") {
+        addTodo(input.value);
+    }
+})
+
+const addTodo = val => {
+    console.log(val);
+}
 
 // sort items, undone first
 // add `delete` functionality (DELETE)
