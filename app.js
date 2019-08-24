@@ -3,23 +3,14 @@ const input = document.querySelector('#new-todo');
 const todoDiv = document.querySelector('#todo');
 const doneDiv = document.querySelector('#done');
 
-// container.innerHTML = `<h1 style='text-align:center;'>To Do -- Vanilla JS</h1>`;
-
 const getTodos = () => {
     fetch('https://jsonplaceholder.typicode.com/todos')
     .then(data => data.json())
-    .then(json => {
-        console.log(json);
-        displayTodoList(json);
-    })
-    .catch(err => {
-        console.error(err);
-    })
+    .then(json => displayTodoList(json))
+    .catch(err => console.error(err))
 }
 
 const handleClickTodo = e => {
-    console.log(e.target.parentElement.id);
-
     let id = e.target.id.replace('todo_','');
     let done = (e.target.parentElement.id === "done");
 
@@ -85,31 +76,12 @@ input.addEventListener('keyup', e => {
 })
 
 const addTodo = val => {
-    console.log(val);
-
     fetch(`https://jsonplaceholder.typicode.com/todos`, {
         method: 'POST',
         body: JSON.stringify({ title: val }),
         headers:{ 'Content-Type': 'application/json' }
     })
     .then(res => res.json())
-    .then(json => {console.log(json); displayTodo(json); })
+    .then(json => displayTodo(json))
     .catch(err => console.error('Error:', err));
 }
-
-// sort items, undone first
-// add `delete` functionality (DELETE)
-// create `add` form
-// handle `add` form input (POST)
-
-
-
-
-// const api = {
-//     getTodos: 'https://jsonplaceholder.typicode.com/todos',
-//     getTodo: 'https://jsonplaceholder.typicode.com/todos/', // ${id}
-//     putTodo: 'https://jsonplaceholder.typicode.com/todos/', // ${id}
-//     postTodo: 'https://jsonplaceholder.typicode.com/todos',
-//     deleteTodo: 'https://jsonplaceholder.typicode.com/todos/' // ${id}
-// }
-
