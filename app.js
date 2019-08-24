@@ -22,6 +22,15 @@ const handleClickTodo = e => {
 
     let id = e.target.id.replace('todo_','');
     let done = (e.target.parentElement.id === "done");
+
+    if(id > 200) { // these don't actually exist on the server so we have to fake it
+        updateStatus({
+            id: id,
+            completed: !done
+        });
+
+        return false;
+    }
     
     fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
         method: 'PUT',
@@ -51,10 +60,10 @@ const displayTodo = todo => {
     todoEl.appendChild(todoText);
     todoEl.addEventListener('click', handleClickTodo, true);
     if(todo.completed) {
-        doneDiv.appendChild(todoEl);
+        doneDiv.prepend(todoEl);
     }
     else {
-        todoDiv.appendChild(todoEl);
+        todoDiv.prepend(todoEl);
     }
 }
 
@@ -71,11 +80,21 @@ getTodos();
 input.addEventListener('keyup', e => {
     if(e.key === "Enter") {
         addTodo(input.value);
+        input.value = '';
     }
 })
 
 const addTodo = val => {
     console.log(val);
+
+    fetch(`https://jsonplaceholder.typicode.com/todos`, {
+        method: 'POST',
+        body: JSON.stringify({ title: val }),
+        headers:{ 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json())
+    .then(json => {console.log(json); displayTodo(json); })
+    .catch(err => console.error('Error:', err));
 }
 
 // sort items, undone first
