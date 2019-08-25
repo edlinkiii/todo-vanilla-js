@@ -2,6 +2,7 @@ const container = document.querySelector('#container');
 const input = document.querySelector('#new-todo');
 const todoDiv = document.querySelector('#todo');
 const doneDiv = document.querySelector('#done');
+const menu = document.querySelector('#menu');
 
 const getTodos = () => {
     fetch('https://jsonplaceholder.typicode.com/todos')
@@ -43,6 +44,12 @@ const updateStatus = obj => {
     }
 }
 
+const showContextMenu = e => {
+    e.preventDefault();
+    console.log(e);
+    menu.style.display = 'block';
+}
+
 const displayTodo = todo => {
     let todoText = document.createTextNode(todo.title);
     let todoEl = document.createElement('div');
@@ -50,6 +57,7 @@ const displayTodo = todo => {
     todoEl.classList.add('todo-item');
     todoEl.appendChild(todoText);
     todoEl.addEventListener('click', handleClickTodo, true);
+    todoEl.addEventListener('contextmenu', showContextMenu, true);
     if(todo.completed) {
         doneDiv.prepend(todoEl);
     }
@@ -66,15 +74,6 @@ const displayTodoList = json => {
     });
 } 
 
-getTodos();
-
-input.addEventListener('keyup', e => {
-    if(e.key === "Enter") {
-        addTodo(input.value);
-        input.value = '';
-    }
-})
-
 const addTodo = val => {
     fetch(`https://jsonplaceholder.typicode.com/todos`, {
         method: 'POST',
@@ -85,3 +84,21 @@ const addTodo = val => {
     .then(json => displayTodo(json))
     .catch(err => console.error('Error:', err));
 }
+
+(function() {
+    input.addEventListener('keyup', e => {
+        if(e.key === "Enter") {
+            addTodo(input.value);
+            input.value = '';
+        }
+    })
+    
+    window.addEventListener('keyup', e => {
+        if(e.key === "Escape") {
+            console.log('ESC')
+            menu.style.display = 'none';
+        }
+    })
+    
+    getTodos();
+})();
