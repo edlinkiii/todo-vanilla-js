@@ -46,6 +46,8 @@ body {
     box-shadow: 0px 0px 3px #aaa;
     background-color: #fff;
     display: none;
+    position: absolute;
+    z-index: 10;
 }
 
 #menu ul {

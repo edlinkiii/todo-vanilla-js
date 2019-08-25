@@ -3,6 +3,7 @@ const input = document.querySelector('#new-todo');
 const todoDiv = document.querySelector('#todo');
 const doneDiv = document.querySelector('#done');
 const menu = document.querySelector('#menu');
+const menuList = document.querySelector('#menu ul');
 
 const getTodos = () => {
     fetch('https://jsonplaceholder.typicode.com/todos')
@@ -12,30 +13,33 @@ const getTodos = () => {
 }
 
 const handleClickTodo = e => {
-    let id = e.target.id.replace('todo_','');
-    let done = (e.target.parentElement.id === "done");
+    let itemObj = {
+        id: e.target.id.replace('todo_',''),
+        completed: !(e.target.parentElement.id === "done")
+    }
 
     if(id > 200) { // these don't actually exist on the server so we have to fake it
-        updateStatus({
-            id: id,
-            completed: !done
-        });
-
-        return false;
+        updateElement(itemObj);
     }
-    
-    fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+    else {
+        putTodo(itemObj);
+    }
+}
+
+const putTodo = obj => {
+    fetch(`https://jsonplaceholder.typicode.com/todos/${obj.id}`, {
         method: 'PUT',
-        body: JSON.stringify({ completed: !done }),
+        body: JSON.stringify({ completed: !obj.completed }),
         headers:{ 'Content-Type': 'application/json' }
     })
     .then(res => res.json())
-    .then(json => updateStatus(json))
+    .then(json => updateElement(json))
     .catch(err => console.error('Error:', err));
 }
 
-const updateStatus = obj => {
+const updateElement = obj => {
     let el = document.querySelector(`#todo_${obj.id}`);
+
     if(obj.completed) {
         doneDiv.prepend(el);
     }
@@ -44,10 +48,64 @@ const updateStatus = obj => {
     }
 }
 
+const deleteTodo = id => {
+    fetch(`https://jsonplaceholder.typicode.com/todos/${obj.id}`, {
+        method: 'DELETE',
+        headers:{ 'Content-Type': 'application/json' }
+    })
+    .then(res => removeElement(id))
+    .catch(err => console.error('Error:', err));
+}
+
+const removeElement = id => {
+    let el = document.querySelector(`#todo_${obj.id}`);
+
+    el.remove();
+}
+
 const showContextMenu = e => {
     e.preventDefault();
-    console.log(e);
+
+    let id = e.target.id.replace('todo_','');
+    let done = (e.target.parentElement.id === "done");
+    let itemObj = {
+        id: id,
+        completed: !done
+    }
+
+    menuList.setAttribute('data-item',encodeURIComponent(JSON.stringify(itemObj)));
+
     menu.style.display = 'block';
+    menu.style.left = e.pageX + "px";
+    menu.style.top = e.pageY + "px";
+}
+
+const handleContextFunction = e => {
+    let clicked = e.target.id;
+    let itemObj = JSON.parse(decodeURIComponent(menuList.getAttribute('data-item'))); // ,encodeURIComponent(JSON.stringify(itemObj))
+
+    switch(clicked) {
+        case 'context__complete':
+            // mark as complete
+            console.log(itemObj);
+            // close the menu
+            menu.style.display = 'none';
+            break;
+        case 'context__uncomplete':
+            // mark as complete
+            console.log(itemObj);
+            // close the menu
+            menu.style.display = 'none';
+            break;
+        case 'context__delete':
+            // do delete
+            console.log(itemObj);
+            // close the menu
+            menu.style.display = 'none';
+            break;
+        default:
+            break;
+    }
 }
 
 const displayTodo = todo => {
@@ -95,10 +153,11 @@ const addTodo = val => {
     
     window.addEventListener('keyup', e => {
         if(e.key === "Escape") {
-            console.log('ESC')
             menu.style.display = 'none';
         }
     })
+
+    menu.addEventListener('click', handleContextFunction);
     
     getTodos();
 })();
