@@ -4,6 +4,9 @@ const todoDiv = document.querySelector('#todo');
 const doneDiv = document.querySelector('#done');
 const menu = document.querySelector('#menu');
 const menuList = document.querySelector('#menu ul');
+const option__complete = document.querySelector('#menu #context__complete');
+const option__uncomplete = document.querySelector('#menu #context__uncomplete');
+const option__delete = document.querySelector('#menu #context__delete');
 
 const handleClickTodo = e => {
     let itemObj = {
@@ -40,14 +43,22 @@ const removeElement = id => {
 const showContextMenu = e => {
     e.preventDefault();
 
-    let id = e.target.id.replace('todo_','');
-    let done = (e.target.parentElement.id === "done");
+    let done = (e.target.parentElement.id === "done"); console.log(done, (!done));
     let itemObj = {
-        id: id,
-        completed: !done
+        id: e.target.id.replace('todo_',''),
+        completed: (!done)
     }
 
     menuList.setAttribute('data-item',encodeURIComponent(JSON.stringify(itemObj)));
+
+    if(done) { console.log('this')
+        option__complete.style.display = 'none';
+        option__uncomplete.style.display = 'block';
+    }
+    else { console.log('that')
+        option__complete.style.display = 'block';
+        option__uncomplete.style.display = 'none';
+    }
 
     menu.style.display = 'block';
     menu.style.left = e.pageX + "px";
@@ -56,24 +67,25 @@ const showContextMenu = e => {
 
 const handleContextFunction = e => {
     let clicked = e.target.id;
-    let itemObj = JSON.parse(decodeURIComponent(menuList.getAttribute('data-item'))); // ,encodeURIComponent(JSON.stringify(itemObj))
+    let itemObj = JSON.parse(decodeURIComponent(menuList.getAttribute('data-item')));
 
     switch(clicked) {
         case 'context__complete':
-            // mark as complete
-            console.log(itemObj);
-            // close the menu
-            menu.style.display = 'none';
-            break;
         case 'context__uncomplete':
-            // mark as complete
+            // mark as uncomplete
             console.log(itemObj);
+            if(itemObj.id > 200) { // these don't actually exist on the server so we have to fake it
+                updateElement(itemObj);
+            }
+            else {
+                putTodo(itemObj);
+            }
             // close the menu
             menu.style.display = 'none';
             break;
         case 'context__delete':
             // do delete
-            console.log(itemObj);
+            console.log(itemObj.id);
             // close the menu
             menu.style.display = 'none';
             break;
