@@ -23,7 +23,7 @@ const handleClickTodo = e => {
     }
 }
 
-const updateElement = itemObj => { console.log(itemObj)
+const updateElement = itemObj => {
     let el = document.querySelector(`#todo_${itemObj.id}`);
 
     if(itemObj.completed) {
@@ -35,7 +35,7 @@ const updateElement = itemObj => { console.log(itemObj)
 }
 
 const removeElement = id => {
-    let el = document.querySelector(`#todo_${obj.id}`);
+    let el = document.querySelector(`#todo_${id}`);
 
     el.remove();
 }
@@ -43,7 +43,7 @@ const removeElement = id => {
 const showContextMenu = e => {
     e.preventDefault();
 
-    let done = (e.target.parentElement.id === "done"); console.log(done, (!done));
+    let done = (e.target.parentElement.id === "done");
     let itemObj = {
         id: e.target.id.replace('todo_',''),
         completed: (!done)
@@ -51,11 +51,11 @@ const showContextMenu = e => {
 
     menuList.setAttribute('data-item',encodeURIComponent(JSON.stringify(itemObj)));
 
-    if(done) { console.log('this')
+    if(done) {
         option__complete.style.display = 'none';
         option__uncomplete.style.display = 'block';
     }
-    else { console.log('that')
+    else {
         option__complete.style.display = 'block';
         option__uncomplete.style.display = 'none';
     }
@@ -72,21 +72,16 @@ const handleContextFunction = e => {
     switch(clicked) {
         case 'context__complete':
         case 'context__uncomplete':
-            // mark as uncomplete
-            console.log(itemObj);
             if(itemObj.id > 200) { // these don't actually exist on the server so we have to fake it
                 updateElement(itemObj);
             }
             else {
                 putTodo(itemObj);
             }
-            // close the menu
             menu.style.display = 'none';
             break;
         case 'context__delete':
-            // do delete
-            console.log(itemObj.id);
-            // close the menu
+            deleteTodo(itemObj.id);
             menu.style.display = 'none';
             break;
         default:
@@ -148,11 +143,13 @@ const putTodo = obj => {
 }
 
 const deleteTodo = id => {
-    fetch(`https://jsonplaceholder.typicode.com/todos/${obj.id}`, {
+    fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
         method: 'DELETE',
+        body: JSON.stringify({ id: id }),
         headers:{ 'Content-Type': 'application/json' }
     })
-    .then(res => removeElement(id))
+    .then(res => res.json())
+    .then(json => removeElement(id))
     .catch(err => console.error('Error:', err));
 }
 
