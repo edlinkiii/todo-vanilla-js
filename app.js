@@ -1,7 +1,6 @@
 const container = document.querySelector('#container');
 const input = document.querySelector('#new-todo');
-const todoDiv = document.querySelector('#todo');
-const doneDiv = document.querySelector('#done');
+const done = document.querySelector('#done');
 const menu = document.querySelector('#menu');
 const menuList = document.querySelector('#menu ul');
 const option__complete = document.querySelector('#menu #context__complete');
@@ -9,28 +8,29 @@ const option__uncomplete = document.querySelector('#menu #context__uncomplete');
 const option__delete = document.querySelector('#menu #context__delete');
 
 const handleClickTodo = e => {
-    let itemObj = {
+    let todo = {
         id: e.target.id.replace('todo_',''),
-        completed: !(e.target.parentElement.id === "done")
+        completed: !(e.target.classList.contains('completed'))
     }
-    console.log(itemObj)
 
-    if(itemObj.id > 200) { // these don't actually exist on the server so we have to fake it
-        updateElement(itemObj);
+    if(todo.id > 200) { // these don't actually exist on the server so we have to fake it
+        updateElement(todo);
     }
     else {
-        putTodo(itemObj);
+        putTodo(todo);
     }
 }
 
-const updateElement = itemObj => {
-    let el = document.querySelector(`#todo_${itemObj.id}`);
+const updateElement = todo => {
+    let todoEl = document.querySelector(`#todo_${todo.id}`);
 
-    if(itemObj.completed) {
-        doneDiv.prepend(el);
+    if(todo.completed) {
+        todoEl.classList.add('completed');
+        done.after(todoEl);
     }
     else {
-        todoDiv.prepend(el);
+        todoEl.classList.remove('completed');
+        input.after(todoEl);
     }
 }
 
@@ -43,15 +43,15 @@ const removeElement = id => {
 const showContextMenu = e => {
     e.preventDefault();
 
-    let done = (e.target.parentElement.id === "done");
+    let completed = e.target.classList.contains('completed');
     let itemObj = {
         id: e.target.id.replace('todo_',''),
-        completed: (!done)
+        completed: !completed
     }
 
     menuList.setAttribute('data-item',encodeURIComponent(JSON.stringify(itemObj)));
 
-    if(done) {
+    if(completed) {
         option__complete.style.display = 'none';
         option__uncomplete.style.display = 'block';
     }
@@ -94,14 +94,17 @@ const displayTodo = todo => {
     let todoEl = document.createElement('div');
     todoEl.id = `todo_${todo.id}`;
     todoEl.classList.add('todo-item');
+    if(todo.completed) {
+        todoEl.classList.add('completed');
+    }
     todoEl.appendChild(todoText);
     todoEl.addEventListener('click', handleClickTodo, true);
     todoEl.addEventListener('contextmenu', showContextMenu, true);
     if(todo.completed) {
-        doneDiv.prepend(todoEl);
+        done.after(todoEl);
     }
     else {
-        todoDiv.prepend(todoEl);
+        input.after(todoEl);
     }
 }
 
@@ -131,10 +134,10 @@ const addTodo = val => {
     .catch(err => console.error('Error:', err));
 }
 
-const putTodo = obj => {
-    fetch(`https://jsonplaceholder.typicode.com/todos/${obj.id}`, {
+const putTodo = todo => {
+    fetch(`https://jsonplaceholder.typicode.com/todos/${todo.id}`, {
         method: 'PUT',
-        body: JSON.stringify({ completed: obj.completed }),
+        body: JSON.stringify({ completed: todo.completed }),
         headers:{ 'Content-Type': 'application/json' }
     })
     .then(res => res.json())

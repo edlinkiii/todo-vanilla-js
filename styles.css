@@ -24,13 +24,17 @@ body {
     box-sizing: border-box;
 }
 
+#done {
+    display: none;
+}
+
 .todo-item {
     border-top: 1px solid #ddd;
     padding: 10px;
     cursor: pointer;
 }
 
-#done .todo-item {
+.todo-item.completed {
     background: #eee;
     color: #888;
     text-decoration: line-through;
