@@ -7,17 +7,30 @@ const option__complete = document.querySelector('#menu #context__complete');
 const option__uncomplete = document.querySelector('#menu #context__uncomplete');
 const option__delete = document.querySelector('#menu #context__delete');
 
-const handleClickTodo = e => {
-    let todo = {
-        id: e.target.id.replace('todo_',''),
-        completed: !(e.target.classList.contains('completed'))
-    }
+const displayTodoList = json => {
+    json.forEach((todo, i) => {
+        if(i >= 20) return false;
 
-    if(todo.id > 200) { // these don't actually exist on the server so we have to fake it
-        updateElement(todo);
+        displayTodo(todo);
+    });
+} 
+
+const displayTodo = todo => {
+    let todoText = document.createTextNode(todo.title);
+    let todoEl = document.createElement('div');
+    todoEl.id = `todo_${todo.id}`;
+    todoEl.classList.add('todo-item');
+    if(todo.completed) {
+        todoEl.classList.add('completed');
+    }
+    todoEl.appendChild(todoText);
+    todoEl.addEventListener('click', handleClickTodo, true);
+    todoEl.addEventListener('contextmenu', showContextMenu, true);
+    if(todo.completed) {
+        done.after(todoEl);
     }
     else {
-        putTodo(todo);
+        input.after(todoEl);
     }
 }
 
@@ -38,6 +51,20 @@ const removeElement = id => {
     let el = document.querySelector(`#todo_${id}`);
 
     el.remove();
+}
+
+const handleClickTodo = e => {
+    let todo = {
+        id: e.target.id.replace('todo_',''),
+        completed: !(e.target.classList.contains('completed'))
+    }
+
+    if(todo.id > 200) { // these don't actually exist on the server so we have to fake it
+        updateElement(todo);
+    }
+    else {
+        putTodo(todo);
+    }
 }
 
 const showContextMenu = e => {
@@ -88,33 +115,6 @@ const handleContextFunction = e => {
             break;
     }
 }
-
-const displayTodo = todo => {
-    let todoText = document.createTextNode(todo.title);
-    let todoEl = document.createElement('div');
-    todoEl.id = `todo_${todo.id}`;
-    todoEl.classList.add('todo-item');
-    if(todo.completed) {
-        todoEl.classList.add('completed');
-    }
-    todoEl.appendChild(todoText);
-    todoEl.addEventListener('click', handleClickTodo, true);
-    todoEl.addEventListener('contextmenu', showContextMenu, true);
-    if(todo.completed) {
-        done.after(todoEl);
-    }
-    else {
-        input.after(todoEl);
-    }
-}
-
-const displayTodoList = json => {
-    json.forEach((todo, i) => {
-        if(i >= 20) return false;
-
-        displayTodo(todo);
-    });
-} 
 
 const getTodos = () => {
     fetch('https://jsonplaceholder.typicode.com/todos')
