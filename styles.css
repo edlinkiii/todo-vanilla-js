@@ -36,8 +36,12 @@ ul, li {
     padding: 10px;
     cursor: pointer;
 }
+.todo-item:hover {
+    background: #0df;
+}
 
-.todo-item.completed {
+.todo-item.completed,
+.todo-item.completed:hover {
     background: #eee;
     color: #888;
     text-decoration: line-through;
