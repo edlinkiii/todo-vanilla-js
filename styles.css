@@ -7,6 +7,12 @@ body {
     background: #eee;
 }
 
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
 #container {
     width: 600px;
     margin: 10px auto;
@@ -24,12 +30,9 @@ body {
     box-sizing: border-box;
 }
 
-#done {
-    display: none;
-}
-
 .todo-item {
     border-top: 1px solid #ddd;
+    margin: 0;
     padding: 10px;
     cursor: pointer;
 }

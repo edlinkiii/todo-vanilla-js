@@ -1,6 +1,7 @@
 const container = document.querySelector('#container');
 const input = document.querySelector('#new-todo');
-const done = document.querySelector('#done');
+const todoList = document.querySelector('#container ul#todo');
+const doneList = document.querySelector('#container ul#done');
 const menu = document.querySelector('#menu');
 const menuList = document.querySelector('#menu ul');
 const option__complete = document.querySelector('#menu #context__complete');
@@ -17,7 +18,7 @@ const displayTodoList = json => {
 
 const displayTodo = todo => {
     let todoText = document.createTextNode(todo.title);
-    let todoEl = document.createElement('div');
+    let todoEl = document.createElement('li');
     todoEl.id = `todo_${todo.id}`;
     todoEl.classList.add('todo-item');
     if(todo.completed) {
@@ -27,10 +28,10 @@ const displayTodo = todo => {
     todoEl.addEventListener('click', handleClickTodo, true);
     todoEl.addEventListener('contextmenu', showContextMenu, true);
     if(todo.completed) {
-        done.after(todoEl);
+        doneList.prepend(todoEl);
     }
     else {
-        input.after(todoEl);
+        todoList.prepend(todoEl);
     }
 }
 
@@ -39,11 +40,11 @@ const updateElement = todo => {
 
     if(todo.completed) {
         todoEl.classList.add('completed');
-        done.after(todoEl);
+        doneList.prepend(todoEl);
     }
     else {
         todoEl.classList.remove('completed');
-        input.after(todoEl);
+        todoList.prepend(todoEl);
     }
 }
 
