@@ -21,6 +21,7 @@ const displayTodo = todo => {
     let todoEl = document.createElement('li');
     todoEl.id = `todo_${todo.id}`;
     todoEl.classList.add('todo-item');
+    todoEl.setAttribute('role','listitem');
     if(todo.completed) {
         todoEl.classList.add('completed');
     }

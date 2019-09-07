@@ -11,14 +11,14 @@
 <body>
     <div id="container">
         <input type="text" id="new-todo" placeholder="Add a new item..." />
-        <ul id="todo"></ul>
-        <ul id="done"></ul>
+        <ul id="todo" role="list"></ul>
+        <ul id="done" role="list"></ul>
     </div>
     <div id="menu">
-        <ul>
-            <li id="context__complete">I did it!</li>
-            <li id="context__uncomplete">I didn't do it</li>
-            <li id="context__delete">Delete it</li>
+        <ul role="menu">
+            <li><a role="menuitem" id="context__complete">I did it!</a></li>
+            <li><a role="menuitem" id="context__uncomplete">I didn't do it</a></li>
+            <li><a role="menuitem" id="context__delete">Delete it</a></li>
         </ul>
     </div>
     <script src="./app.js"></script>
