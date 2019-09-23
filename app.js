@@ -10,8 +10,6 @@ const option__delete = document.querySelector('#menu #context__delete');
 
 const displayTodoList = json => {
     json.forEach((todo, i) => {
-        if(i >= 20) return false;
-
         displayTodo(todo);
     });
 } 
@@ -118,6 +116,80 @@ const handleContextFunction = e => {
     }
 }
 
+const buildNewTodo = (todo, id) => ({
+    id: id,
+    title: todo,
+    completed: false
+});
+
+const getTodos = () => {
+    try {
+        let itemList = JSON.parse(localStorage.getItem("itemList")) || [];
+        displayTodoList(itemList);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const addTodo = title => {
+    try {
+        let itemList = JSON.parse(localStorage.getItem("itemList")) || [];
+        let newTodo = buildNewTodo(title,itemList.length);
+        itemList.push(newTodo);
+        localStorage.setItem("itemList", JSON.stringify(itemList));
+        displayTodo(newTodo);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const putTodo = todo => {
+    try {
+        let itemList = JSON.parse(localStorage.getItem("itemList")) || [];
+        let updatedItemList = itemList.map(item => {
+            if(item.id == todo.id) {
+                item.completed = todo.completed;
+            }
+            return item;
+        });
+        localStorage.setItem("itemList", JSON.stringify(updatedItemList));
+        updateElement(todo);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const deleteTodo = id => {
+    try {
+        let itemList = JSON.parse(localStorage.getItem("itemList")) || [];
+        let itemListAfterDelete = itemList.filter(item => item.id != id);
+        localStorage.setItem("itemList", JSON.stringify(itemListAfterDelete));
+        removeElement(id);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    input.addEventListener('keyup', e => {
+        if(e.key === "Enter") {
+            addTodo(input.value);
+            input.value = '';
+        }
+    })
+    
+    window.addEventListener('keyup', e => {
+        if(e.key === "Escape") {
+            menu.style.display = 'none';
+        }
+    })
+
+    menu.addEventListener('click', handleContextFunction);
+    
+    getTodos();
+});
+
+/* calls to test api
 const getTodos = () => {
     fetch('https://jsonplaceholder.typicode.com/todos')
     .then(data => data.json())
@@ -157,22 +229,4 @@ const deleteTodo = id => {
     .then(json => removeElement(id))
     .catch(err => console.error('Error:', err));
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    input.addEventListener('keyup', e => {
-        if(e.key === "Enter") {
-            addTodo(input.value);
-            input.value = '';
-        }
-    })
-    
-    window.addEventListener('keyup', e => {
-        if(e.key === "Escape") {
-            menu.style.display = 'none';
-        }
-    })
-
-    menu.addEventListener('click', handleContextFunction);
-    
-    getTodos();
-});
+*/
