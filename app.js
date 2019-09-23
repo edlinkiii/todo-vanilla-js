@@ -7,6 +7,7 @@ const menuList = document.querySelector('#menu ul');
 const option__complete = document.querySelector('#menu #context__complete');
 const option__uncomplete = document.querySelector('#menu #context__uncomplete');
 const option__delete = document.querySelector('#menu #context__delete');
+let myTodos = [];
 
 const displayTodoList = json => {
     json.forEach((todo, i) => {
@@ -55,7 +56,7 @@ const removeElement = id => {
 
 const handleClickTodo = e => {
     let todo = {
-        id: e.target.id.replace('todo_',''),
+        id: parseInt(e.target.id.replace('todo_','')),
         completed: !(e.target.classList.contains('completed'))
     }
 
@@ -72,7 +73,7 @@ const showContextMenu = e => {
 
     let completed = e.target.classList.contains('completed');
     let itemObj = {
-        id: e.target.id.replace('todo_',''),
+        id: parseInt(e.target.id.replace('todo_','')),
         completed: !completed
     }
 
@@ -116,6 +117,8 @@ const handleContextFunction = e => {
     }
 }
 
+const newId = () => (myTodos.reduce((big, t) => big = (big > t.id) ? big : t.id)) + 1;
+
 const buildNewTodo = (todo, id) => ({
     id: id,
     title: todo,
@@ -124,8 +127,8 @@ const buildNewTodo = (todo, id) => ({
 
 const getTodos = () => {
     try {
-        let itemList = JSON.parse(localStorage.getItem("itemList")) || [];
-        displayTodoList(itemList);
+        myTodos = JSON.parse(localStorage.getItem("myTodos")) || [];
+        displayTodoList(myTodos);
     } catch (err) {
         console.error(err);
     }
@@ -133,10 +136,9 @@ const getTodos = () => {
 
 const addTodo = title => {
     try {
-        let itemList = JSON.parse(localStorage.getItem("itemList")) || [];
-        let newTodo = buildNewTodo(title,itemList.length);
-        itemList.push(newTodo);
-        localStorage.setItem("itemList", JSON.stringify(itemList));
+        let newTodo = buildNewTodo(title, newId());
+        myTodos.push(newTodo);
+        localStorage.setItem("myTodos", JSON.stringify(myTodos));
         displayTodo(newTodo);
     } catch (err) {
         console.error(err);
@@ -145,14 +147,14 @@ const addTodo = title => {
 
 const putTodo = todo => {
     try {
-        let itemList = JSON.parse(localStorage.getItem("itemList")) || [];
-        let updatedItemList = itemList.map(item => {
-            if(item.id == todo.id) {
-                item.completed = todo.completed;
+        let myUpdatedTodos = myTodos.map(t => {
+            if(t.id === todo.id) {
+                t.completed = todo.completed;
             }
-            return item;
+            return t;
         });
-        localStorage.setItem("itemList", JSON.stringify(updatedItemList));
+        myTodos = myUpdatedTodos;
+        localStorage.setItem("myTodos", JSON.stringify(myTodos));
         updateElement(todo);
     } catch (err) {
         console.error(err);
@@ -161,9 +163,9 @@ const putTodo = todo => {
 
 const deleteTodo = id => {
     try {
-        let itemList = JSON.parse(localStorage.getItem("itemList")) || [];
-        let itemListAfterDelete = itemList.filter(item => item.id != id);
-        localStorage.setItem("itemList", JSON.stringify(itemListAfterDelete));
+        let myUpdatedTodos = myTodos.filter(t => t.id !== id);
+        myTodos = myUpdatedTodos;
+        localStorage.setItem("myTodos", JSON.stringify(myTodos));
         removeElement(id);
     } catch (err) {
         console.error(err);
@@ -188,45 +190,3 @@ document.addEventListener('DOMContentLoaded', () => {
     
     getTodos();
 });
-
-/* calls to test api
-const getTodos = () => {
-    fetch('https://jsonplaceholder.typicode.com/todos')
-    .then(data => data.json())
-    .then(json => displayTodoList(json))
-    .catch(err => console.error(err))
-}
-
-const addTodo = val => {
-    fetch(`https://jsonplaceholder.typicode.com/todos`, {
-        method: 'POST',
-        body: JSON.stringify({ title: val }),
-        headers:{ 'Content-Type': 'application/json' }
-    })
-    .then(res => res.json())
-    .then(json => displayTodo(json))
-    .catch(err => console.error('Error:', err));
-}
-
-const putTodo = todo => {
-    fetch(`https://jsonplaceholder.typicode.com/todos/${todo.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ completed: todo.completed }),
-        headers:{ 'Content-Type': 'application/json' }
-    })
-    .then(res => res.json())
-    .then(json => updateElement(json))
-    .catch(err => console.error('Error:', err));
-}
-
-const deleteTodo = id => {
-    fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
-        method: 'DELETE',
-        body: JSON.stringify({ id: id }),
-        headers:{ 'Content-Type': 'application/json' }
-    })
-    .then(res => res.json())
-    .then(json => removeElement(id))
-    .catch(err => console.error('Error:', err));
-}
-*/
