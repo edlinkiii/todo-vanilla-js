@@ -117,7 +117,7 @@ const handleContextFunction = e => {
     }
 }
 
-const newId = () => (myTodos.reduce((big, t) => big = (big > t.id) ? big : t.id)) + 1;
+const newId = () => (myTodos.reduce((big, t) => big = (big > t.id) ? big : t.id, 0)) + 1;
 
 const buildNewTodo = (todo, id) => ({
     id: id,
